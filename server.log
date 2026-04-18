@@ -1,0 +1,25 @@
+
+> turf-slot-booking@1.0.0 dev
+> next dev
+
+ ⚠ Port 3000 is in use, trying 3001 instead.
+ ⚠ Port 3001 is in use, trying 3002 instead.
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3002
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1428ms
+[?25h
+Node.js[134849]: ../src/node.cc:701:void node::ResetStdio(): Assertion `!(err != 0) || (err == -1 && (*__errno_location ()) == 1)' failed.
+ 1: 0x71581c20633c node::Abort() [/lib/x86_64-linux-gnu/libnode.so.109]
+ 2: 0x71581c2063cb  [/lib/x86_64-linux-gnu/libnode.so.109]
+ 3: 0x71581c1b88c6  [/lib/x86_64-linux-gnu/libnode.so.109]
+ 4: 0x71581b447a76  [/lib/x86_64-linux-gnu/libc.so.6]
+ 5: 0x71581b447bbe  [/lib/x86_64-linux-gnu/libc.so.6]
+ 6: 0x71581c12dc5d node::DefaultProcessExitHandler(node::Environment*, int) [/lib/x86_64-linux-gnu/libnode.so.109]
+ 7: 0x71581c17e729 node::Environment::Exit(int) [/lib/x86_64-linux-gnu/libnode.so.109]
+ 8: 0x71581c65138e v8::internal::FunctionCallbackArguments::Call(v8::internal::CallHandlerInfo) [/lib/x86_64-linux-gnu/libnode.so.109]
+ 9: 0x71581c6519b1  [/lib/x86_64-linux-gnu/libnode.so.109]
+10: 0x71581c6522af v8::internal::Builtin_HandleApiCall(int, unsigned long*, v8::internal::Isolate*) [/lib/x86_64-linux-gnu/libnode.so.109]
+11: 0x71581c4fc2f9  [/lib/x86_64-linux-gnu/libnode.so.109]
