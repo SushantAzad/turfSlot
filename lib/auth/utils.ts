@@ -45,25 +45,20 @@ export const authUtils = {
         return { user: null, error: authError?.message || "Sign up failed" };
       }
 
-      // Create user profile
-      const newUser = await userQueries.create({
-        id: data.user.id,
-        email,
-        role,
-        full_name: fullName,
-        is_verified: false,
-      });
+      // The PostgreSQL trigger on_auth_user_created automatically creates the user profile
+      // so we don't need to manually insert. We just fetch it to return.
+      const newUser = await userQueries.getById(data.user.id);
 
-      if (!newUser) {
-        // Note: We cannot call admin.deleteUser from client side (requires service role).
-        // The orphan auth user can be cleaned up via Supabase dashboard if needed.
-        return {
-          user: null,
-          error: "Account created but profile setup failed. Please contact support.",
-        };
-      }
-
-      return { user: newUser, error: null };
+      return { 
+        user: newUser || {
+          id: data.user.id,
+          email,
+          role,
+          full_name: fullName,
+          is_verified: false
+        } as User, 
+        error: null 
+      };
     } catch (error: any) {
       return {
         user: null,

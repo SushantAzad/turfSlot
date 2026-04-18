@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { create } from "zustand";
 import { supabase } from "@/lib/supabase/client";
 import { userQueries } from "@/lib/supabase/queries";
@@ -48,11 +48,19 @@ const initializeAuth = () => {
   // Step 2: Global subscription listener
   supabase.auth.onAuthStateChange(async (_event, session) => {
     try {
+      const currentState = useAuthStore.getState();
+      
       if (session?.user) {
+        // Prevent state churn on tab switch (e.g. TOKEN_REFRESHED) if user is already loaded
+        if (currentState.user?.id === session.user.id) {
+          return;
+        }
         const profile = await userQueries.getById(session.user.id);
         useAuthStore.setState({ user: profile, isLoading: false, error: null });
       } else {
-        useAuthStore.setState({ user: null, isLoading: false, error: null });
+        if (currentState.user !== null) {
+          useAuthStore.setState({ user: null, isLoading: false, error: null });
+        }
       }
     } catch (err: any) {
       useAuthStore.setState({ error: err.message, isLoading: false });
@@ -62,7 +70,9 @@ const initializeAuth = () => {
 
 // ============ USE AUTH HOOK ============
 export const useAuth = () => {
-  initializeAuth();
+  useEffect(() => {
+    initializeAuth();
+  }, []);
   
   const user = useAuthStore((state) => state.user);
   const isLoading = useAuthStore((state) => state.isLoading);

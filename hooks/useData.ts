@@ -56,6 +56,8 @@ export const useTurf = (id: string) => {
 
     if (id) {
       fetchTurf();
+    } else {
+      setIsLoading(false);
     }
   }, [id]);
 
@@ -84,6 +86,8 @@ export const useOwnerTurfs = (ownerId: string) => {
   useEffect(() => {
     if (ownerId) {
       fetchTurfsData();
+    } else {
+      setIsLoading(false);
     }
   }, [ownerId, fetchTurfsData]);
 
@@ -113,6 +117,8 @@ export const useSlots = (turfId: string, date: string) => {
 
     if (turfId && date) {
       fetchSlots();
+    } else {
+      setIsLoading(false);
     }
   }, [turfId, date]);
 
@@ -148,6 +154,8 @@ export const useAvailableSlots = (
 
     if (turfId && startDate && endDate) {
       fetchSlots();
+    } else {
+      setIsLoading(false);
     }
   }, [turfId, startDate, endDate]);
 
@@ -177,6 +185,8 @@ export const useUserBookings = (userId: string) => {
 
     if (userId) {
       fetchBookings();
+    } else {
+      setIsLoading(false);
     }
   }, [userId]);
 
@@ -204,6 +214,8 @@ export const useTurfBookings = (turfId: string) => {
   useEffect(() => {
     if (turfId) {
       fetchBookings();
+    } else {
+      setIsLoading(false);
     }
   }, [turfId]);
 
@@ -231,6 +243,8 @@ export const useBooking = (bookingId: string) => {
 
     if (bookingId) {
       fetchBooking();
+    } else {
+      setIsLoading(false);
     }
   }, [bookingId]);
 

@@ -26,6 +26,8 @@ export default function UserBookingsPage() {
   useEffect(() => {
     if (user?.id) {
       fetchBookings(user.id);
+    } else {
+      setIsLoading(false);
     }
   }, [user?.id]);
 

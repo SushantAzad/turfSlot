@@ -50,7 +50,7 @@ function SignupFormContent() {
         toast.error(result.error);
       } else {
         toast.success(
-          "Account created successfully! Please check your email for verification.",
+          "Confirmation link has been sent to your mail",
         );
         router.push("/auth/login?registered=true");
       }
