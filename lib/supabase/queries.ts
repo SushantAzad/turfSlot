@@ -78,7 +78,7 @@ export const turfQueries = {
   async getAll(limit = 20, offset = 0): Promise<Turf[]> {
     const { data, error } = await supabase
       .from(TABLES.TURFS)
-      .select("*")
+      .select("*, owner:users(*)")
       .eq("is_active", "active")
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
@@ -93,7 +93,7 @@ export const turfQueries = {
   async getById(id: string): Promise<Turf | null> {
     const { data, error } = await supabase
       .from(TABLES.TURFS)
-      .select("*")
+      .select("*, owner:users(*)")
       .eq("id", id)
       .single();
 
@@ -107,7 +107,7 @@ export const turfQueries = {
   async getByOwnerId(ownerId: string): Promise<Turf[]> {
     const { data, error } = await supabase
       .from(TABLES.TURFS)
-      .select("*")
+      .select("*, owner:users(*)")
       .eq("owner_id", ownerId)
       .order("created_at", { ascending: false });
 
@@ -150,7 +150,7 @@ export const turfQueries = {
   async search(query: string, limit = 20): Promise<Turf[]> {
     const { data, error } = await supabase
       .from(TABLES.TURFS)
-      .select("*")
+      .select("*, owner:users(*)")
       .eq("is_active", "active")
       .or(
         `name.ilike.%${query}%,location.ilike.%${query}%,description.ilike.%${query}%`,
@@ -279,7 +279,10 @@ export const bookingQueries = {
       .select(
         `
         *,
-        turf:turfs(*),
+        turf:turfs(
+          *,
+          owner:users(*)
+        ),
         slot:availability_slots(*)
       `,
       )
@@ -482,4 +485,120 @@ export const analyticsQueries = {
     }
     return data || [];
   },
+};
+
+// ============ MATCHMAKING & WAITLIST QUERIES ============
+
+export const matchmakingQueries = {
+  // --- Waitlist ---
+  async joinWaitlist(slotId: string, userId: string) {
+    const { data, error } = await supabase
+      .from(TABLES.WAITLISTS)
+      .insert([{ slot_id: slotId, user_id: userId, status: "waiting" }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async leaveWaitlist(slotId: string, userId: string) {
+    const { error } = await supabase
+      .from(TABLES.WAITLISTS)
+      .delete()
+      .eq("slot_id", slotId)
+      .eq("user_id", userId);
+
+    if (error) throw error;
+  },
+
+  async getWaitlistStatus(slotId: string, userId: string) {
+    const { data, error } = await supabase
+      .from(TABLES.WAITLISTS)
+      .select("*")
+      .eq("slot_id", slotId)
+      .eq("user_id", userId)
+      .single();
+
+    if (error && error.code !== "PGRST116") {
+      console.error("Waitlist fetch error", error);
+    }
+    return data;
+  },
+
+  // --- Open Games ---
+  async createOpenGame(gameData: { booking_id: string; turf_id: string; host_id: string; total_spots: number; split_fee: number }) {
+    const { data, error } = await supabase
+      .from(TABLES.OPEN_GAMES)
+      .insert([{
+        ...gameData,
+        available_spots: gameData.total_spots,
+        is_active: true
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getOpenGames() {
+    const { data, error } = await supabase
+      .from(TABLES.OPEN_GAMES)
+      .select(`
+        *,
+        host:users(*),
+        turf:turfs(*),
+        booking:bookings(*, slot:availability_slots(*))
+      `)
+      .eq("is_active", true)
+      .gt("available_spots", 0)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching open games:", error);
+      return [];
+    }
+    return data || [];
+  },
+
+  async joinOpenGame(openGameId: string, userId: string) {
+    // 1. Create participant
+    const { data: participant, error: partError } = await supabase
+      .from(TABLES.OPEN_GAME_PARTICIPANTS)
+      .insert([{ open_game_id: openGameId, user_id: userId, payment_status: "pending" }])
+      .select()
+      .single();
+
+    if (partError) {
+      if (partError.code === "23505") throw new Error("You have already joined this game.");
+      throw partError;
+    }
+
+    // 2. Decrement available spots (via RPC or optimistic update, we do basic update here)
+    const { data: game, error: fetchErr } = await supabase
+      .from(TABLES.OPEN_GAMES)
+      .select("available_spots")
+      .eq("id", openGameId)
+      .single();
+
+    if (game && !fetchErr) {
+      await supabase
+        .from(TABLES.OPEN_GAMES)
+        .update({ available_spots: Math.max(0, game.available_spots - 1) })
+        .eq("id", openGameId);
+    }
+
+    return participant;
+  },
+
+  async getGameParticipants(openGameId: string) {
+    const { data, error } = await supabase
+      .from(TABLES.OPEN_GAME_PARTICIPANTS)
+      .select("*, user:users(*)")
+      .eq("open_game_id", openGameId);
+      
+    if (error) return [];
+    return data || [];
+  }
 };

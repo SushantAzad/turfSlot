@@ -155,6 +155,11 @@ export default function BrowseTurfsPage() {
                     {turf.closing_time}
                   </p>
                 )}
+                {turf.owner?.phone_number && (
+                  <p>
+                    <strong>Contact:</strong> {turf.owner.phone_number}
+                  </p>
+                )}
               </div>
 
               {turf.amenities && turf.amenities.length > 0 && (

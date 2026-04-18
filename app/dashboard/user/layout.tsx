@@ -75,6 +75,12 @@ export default function UserDashboardLayout({
           >
             📅 My Bookings
           </Link>
+          <Link
+            href="/dashboard/user/open-games"
+            className="block w-full text-left px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            🫂 Open Games
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-gray-800 space-y-2">
@@ -114,6 +120,12 @@ export default function UserDashboardLayout({
               className="block px-4 py-2 rounded-lg hover:bg-gray-800"
             >
               📅 My Bookings
+            </Link>
+            <Link
+              href="/dashboard/user/open-games"
+              className="block px-4 py-2 rounded-lg hover:bg-gray-800"
+            >
+              🫂 Open Games
             </Link>
             <button
               onClick={handleLogout}

@@ -37,6 +37,9 @@ export const TABLES = {
   NOTIFICATIONS: "notifications",
   ANALYTICS: "analytics",
   AUDIT_LOGS: "audit_logs",
+  OPEN_GAMES: "open_games",
+  OPEN_GAME_PARTICIPANTS: "open_game_participants",
+  WAITLISTS: "waitlists",
 } as const;
 
 // RLS policies

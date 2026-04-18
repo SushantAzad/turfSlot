@@ -42,6 +42,8 @@ export interface Turf {
   slot_duration_minutes: number;
   created_at: string;
   updated_at: string;
+  // Joined data
+  owner?: User;
 }
 
 // Availability Slot type
@@ -123,6 +125,46 @@ export interface Analytics {
   average_rating?: number;
   total_reviews: number;
   month: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Open Games types
+export interface OpenGame {
+  id: string;
+  booking_id: string;
+  turf_id: string;
+  host_id: string;
+  total_spots: number;
+  available_spots: number;
+  split_fee: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  host?: User;
+  turf?: Turf;
+  booking?: Booking;
+}
+
+export interface OpenGameParticipant {
+  id: string;
+  open_game_id: string;
+  user_id: string;
+  payment_status: string;
+  created_at: string;
+  // Joined data
+  user?: User;
+}
+
+// Waitlist type
+export type WaitlistStatus = "waiting" | "notified";
+
+export interface Waitlist {
+  id: string;
+  slot_id: string;
+  user_id: string;
+  status: WaitlistStatus;
   created_at: string;
   updated_at: string;
 }

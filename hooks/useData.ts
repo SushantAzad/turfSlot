@@ -250,3 +250,61 @@ export const useBooking = (bookingId: string) => {
 
   return { booking, isLoading, error };
 };
+
+// ============ MATCHMAKING HOOKS ============
+
+import { matchmakingQueries } from "@/lib/supabase/queries";
+import type { OpenGame, Waitlist, OpenGameParticipant } from "@/types";
+
+export const useOpenGames = () => {
+  const [games, setGames] = useState<OpenGame[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchGames = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await matchmakingQueries.getOpenGames();
+      setGames(data);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchGames();
+  }, [fetchGames]);
+
+  return { games, isLoading, error, refetch: fetchGames };
+};
+
+export const useWaitlistStatus = (slotId: string, userId: string | undefined) => {
+  const [waitlistRecord, setWaitlistRecord] = useState<Waitlist | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchStatus = useCallback(async () => {
+    if (!slotId || !userId) {
+      setIsLoading(false);
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      const data = await matchmakingQueries.getWaitlistStatus(slotId, userId);
+      setWaitlistRecord(data);
+    } catch (err: any) {
+      // Ignored
+    } finally {
+      setIsLoading(false);
+    }
+  }, [slotId, userId]);
+
+  useEffect(() => {
+    fetchStatus();
+  }, [fetchStatus]);
+
+  return { waitlistRecord, isLoading, refetch: fetchStatus };
+};

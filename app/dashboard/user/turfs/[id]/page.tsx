@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useTurf } from "@/hooks/useData";
-import { slotQueries, bookingQueries } from "@/lib/supabase/queries";
+import { slotQueries, bookingQueries, matchmakingQueries } from "@/lib/supabase/queries";
 import type { AvailabilitySlot } from "@/types";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -36,6 +36,10 @@ export default function TurfDetailPage() {
   const [bookingSlotId, setBookingSlotId] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
   const [showConfirm, setShowConfirm] = useState<string | null>(null);
+
+  // Waitlist state: slotId -> true/false
+  const [waitlistSlots, setWaitlistSlots] = useState<Record<string, boolean>>({});
+  const [waitlistLoading, setWaitlistLoading] = useState<string | null>(null);
 
   // Fetch slots whenever date or turf changes
   useEffect(() => {
@@ -89,6 +93,30 @@ export default function TurfDetailPage() {
     }
   };
 
+  const handleWaitlist = async (slotId: string) => {
+    if (!user) {
+      toast.error("Please log in to join the waitlist");
+      return;
+    }
+    const alreadyWaiting = waitlistSlots[slotId];
+    setWaitlistLoading(slotId);
+    try {
+      if (alreadyWaiting) {
+        await matchmakingQueries.leaveWaitlist(slotId, user.id);
+        setWaitlistSlots((prev) => ({ ...prev, [slotId]: false }));
+        toast.success("Removed from waitlist.");
+      } else {
+        await matchmakingQueries.joinWaitlist(slotId, user.id);
+        setWaitlistSlots((prev) => ({ ...prev, [slotId]: true }));
+        toast.success("Added to waitlist! We\u2019ll notify you if this slot frees up. 🔔");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Waitlist action failed.");
+    } finally {
+      setWaitlistLoading(null);
+    }
+  };
+
   if (turfLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -129,6 +157,11 @@ export default function TurfDetailPage() {
             <p className="text-gray-500 mt-1">📍 {turf.location}</p>
             {turf.description && (
               <p className="text-gray-600 mt-3 max-w-xl">{turf.description}</p>
+            )}
+            {turf.owner?.phone_number && (
+              <p className="text-gray-600 mt-2 font-medium">
+                📞 Contact Owner: {turf.owner.phone_number}
+              </p>
             )}
           </div>
           <div className="text-right shrink-0">
@@ -296,23 +329,45 @@ export default function TurfDetailPage() {
                 <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-3">
                   ✗ Already Booked
                 </h3>
+                <p className="text-xs text-gray-400 mb-3">
+                  Join the waitlist and we’ll notify you if a slot opens up! 🔔
+                </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {bookedSlots.map((slot) => (
-                    <div
-                      key={slot.id}
-                      className="p-3 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed"
-                    >
-                      <div className="font-semibold text-gray-500">
-                        {slot.start_time}
+                  {bookedSlots.map((slot) => {
+                    const isWaiting = waitlistSlots[slot.id] ?? false;
+                    const isBusy = waitlistLoading === slot.id;
+                    return (
+                      <div
+                        key={slot.id}
+                        className="p-3 rounded-lg border-2 border-gray-200 bg-gray-50 flex flex-col gap-1"
+                      >
+                        <div className="font-semibold text-gray-500">
+                          {slot.start_time}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          to {slot.end_time}
+                        </div>
+                        <div className="text-xs text-red-400 font-medium">
+                          Booked
+                        </div>
+                        <button
+                          disabled={isBusy}
+                          onClick={() => handleWaitlist(slot.id)}
+                          className={`text-xs mt-1 px-2 py-1 rounded-md font-medium transition-colors border ${
+                            isWaiting
+                              ? "bg-yellow-100 border-yellow-400 text-yellow-800 hover:bg-yellow-200"
+                              : "bg-white border-gray-300 text-gray-600 hover:bg-gray-100"
+                          }`}
+                        >
+                          {isBusy
+                            ? "..."
+                            : isWaiting
+                            ? "🔔 On Waitlist"
+                            : "Join Waitlist"}
+                        </button>
                       </div>
-                      <div className="text-xs text-gray-400">
-                        to {slot.end_time}
-                      </div>
-                      <div className="text-xs text-red-400 font-medium mt-1">
-                        Booked
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
