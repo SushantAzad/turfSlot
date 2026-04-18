@@ -109,11 +109,16 @@ export default function LoginPage() {
           )}
         </div>
 
-        {authError && (
+        {authError === "Email not confirmed" ? (
+          <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg text-sm">
+            <p className="font-semibold mb-1">Verify Your Email</p>
+            A confirmation email was sent to your inbox when you signed up. Please click the link inside to verify your account before signing in.
+          </div>
+        ) : authError ? (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {authError}
           </div>
-        )}
+        ) : null}
 
         <button
           type="submit"

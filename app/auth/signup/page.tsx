@@ -52,7 +52,7 @@ function SignupFormContent() {
         toast.success(
           "Account created successfully! Please check your email for verification.",
         );
-        router.push("/auth/login");
+        router.push("/auth/login?registered=true");
       }
     } catch (err) {
       if (err instanceof ZodError) {
