@@ -158,9 +158,9 @@ export default function TurfDetailPage() {
             {turf.description && (
               <p className="text-gray-600 mt-3 max-w-xl">{turf.description}</p>
             )}
-            {turf.owner?.phone_number && (
+            {turf.contact_number && (
               <p className="text-gray-600 mt-2 font-medium">
-                📞 Contact Owner: {turf.owner.phone_number}
+                📞 Contact Owner: {turf.contact_number}
               </p>
             )}
           </div>

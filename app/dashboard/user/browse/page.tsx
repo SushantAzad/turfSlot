@@ -155,9 +155,9 @@ export default function BrowseTurfsPage() {
                     {turf.closing_time}
                   </p>
                 )}
-                {turf.owner?.phone_number && (
+                {turf.contact_number && (
                   <p>
-                    <strong>Contact:</strong> {turf.owner.phone_number}
+                    <strong>Contact:</strong> {turf.contact_number}
                   </p>
                 )}
               </div>

@@ -29,6 +29,7 @@ export default function OwnerTurfsPage() {
     opening_time: "09:00",
     closing_time: "22:00",
     slot_duration_minutes: 60,
+    contact_number: "",
   });
 
   const handleChange = (
@@ -81,6 +82,7 @@ export default function OwnerTurfsPage() {
         opening_time: "09:00",
         closing_time: "22:00",
         slot_duration_minutes: 60,
+        contact_number: "",
       });
 
       refetch();
@@ -120,6 +122,7 @@ export default function OwnerTurfsPage() {
               opening_time: "09:00",
               closing_time: "22:00",
               slot_duration_minutes: 60,
+              contact_number: "",
             });
           }}
           className="btn btn-primary"
@@ -255,6 +258,29 @@ export default function OwnerTurfsPage() {
                   className="input"
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contact Number
+                </label>
+                <input
+                  type="tel"
+                  name="contact_number"
+                  value={formData.contact_number || ""}
+                  onChange={handleChange}
+                  className="input"
+                  placeholder="e.g. 9876543210"
+                  maxLength={15}
+                />
+                {formErrors.contact_number && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.contact_number}
+                  </p>
+                )}
+                <p className="text-xs text-gray-400 mt-1">
+                  This number will be visible to players booking your turf.
+                </p>
+              </div>
             </div>
 
             <div>
@@ -353,6 +379,7 @@ export default function OwnerTurfsPage() {
                       opening_time: turf.opening_time,
                       closing_time: turf.closing_time,
                       slot_duration_minutes: turf.slot_duration_minutes,
+                      contact_number: turf.contact_number || "",
                     });
                     setShowForm(true);
                   }}

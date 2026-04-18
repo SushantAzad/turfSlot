@@ -36,6 +36,11 @@ export const TurfSchema = z.object({
     .number()
     .min(15, "Minimum slot duration is 15 minutes")
     .default(60),
+  contact_number: z
+    .string()
+    .regex(/^[0-9]{10,15}$/, "Contact number must be 10–15 digits")
+    .optional()
+    .or(z.literal("")),
 });
 
 export type TurfInput = z.infer<typeof TurfSchema>;

@@ -40,6 +40,7 @@ export interface Turf {
   opening_time?: string;
   closing_time?: string;
   slot_duration_minutes: number;
+  contact_number?: string;
   created_at: string;
   updated_at: string;
   // Joined data
@@ -216,6 +217,7 @@ export interface CreateTurfDTO {
   opening_time?: string;
   closing_time?: string;
   slot_duration_minutes?: number;
+  contact_number?: string;
 }
 
 export interface UpdateTurfDTO extends Partial<CreateTurfDTO> {

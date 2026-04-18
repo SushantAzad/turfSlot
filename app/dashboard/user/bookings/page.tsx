@@ -219,9 +219,9 @@ export default function UserBookingsPage() {
                         <p className="text-gray-600">
                           📍 {booking.turf?.location}
                         </p>
-                        {booking.turf?.owner?.phone_number && (
+                        {booking.turf?.contact_number && (
                           <p className="text-gray-600 mt-1">
-                            📞 Contact: {booking.turf.owner.phone_number}
+                            📞 Contact: {booking.turf.contact_number}
                           </p>
                         )}
                         <p className="text-gray-600 mt-2">
@@ -285,9 +285,9 @@ export default function UserBookingsPage() {
                         <p className="text-gray-600">
                           📍 {booking.turf?.location}
                         </p>
-                        {booking.turf?.owner?.phone_number && (
+                        {booking.turf?.contact_number && (
                           <p className="text-gray-600 mt-1">
-                            📞 Contact: {booking.turf.owner.phone_number}
+                            📞 Contact: {booking.turf.contact_number}
                           </p>
                         )}
                         <p className="text-gray-600 mt-2">
