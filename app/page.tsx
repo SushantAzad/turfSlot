@@ -45,28 +45,35 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="container py-20 text-center">
-        <h1 className="text-5xl font-bold text-gray-900 mb-4">
-          Book Your Favorite Turf
-        </h1>
-        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          Find and book the perfect sports venue for your game. Browse available
-          slots, make instant bookings, and enjoy seamless scheduling.
-        </p>
-
-        <div className="flex gap-4 justify-center mb-12">
-          <Link
-            href="/auth/signup?role=user"
-            className="btn btn-primary btn-lg"
-          >
-            Book a Slot
-          </Link>
-          <Link
-            href="/auth/signup?role=turf_owner"
-            className="btn btn-secondary btn-lg"
-          >
-            Add Your Turf
-          </Link>
+      <section 
+        className="relative w-full py-32 text-center bg-cover bg-center bg-no-repeat" 
+        style={{ backgroundImage: "url('/images/hero-bg.png')" }}
+      >
+        {/* Dark gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80"></div>
+        
+        <div className="container relative z-10">
+          <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-lg tracking-tight">
+            Book Your Favorite Turf
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl mx-auto drop-shadow-md font-medium">
+            Find and book the perfect sports venue for your game. Browse available
+            slots, make instant bookings, and enjoy seamless scheduling.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/auth/signup?role=user" 
+              className="btn bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-3 shadow-xl hover:shadow-2xl transition-all font-semibold rounded-lg"
+            >
+              Book a Slot
+            </Link>
+            <Link 
+              href="/auth/signup?role=turf_owner" 
+              className="btn bg-white/10 backdrop-blur-md text-white hover:bg-white/20 border border-white/30 text-lg px-8 py-3 transition-all font-semibold rounded-lg shadow-lg hover:shadow-xl"
+            >
+              Add Your Turf
+            </Link>
+          </div>
         </div>
       </section>
 
